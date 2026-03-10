@@ -23,12 +23,12 @@ def chart_feature_correlation(df: pd.DataFrame) -> alt.Chart:
     corr_df = pd.DataFrame(corr_rows)
 
     return alt.Chart(corr_df).mark_bar().encode(
-        x=alt.X('correlation:Q', scale=alt.Scale(domain=[-0.3, 0.3]),
+        x=alt.X('correlation:Q', scale=alt.Scale(domain=[-0.16, 0.16]),
                  title='Correlation with Popularity'),
         y=alt.Y('feature:N', sort=alt.EncodingSortField(field='correlation', order='descending'),
                  title=None),
         color=alt.Color('correlation:Q',
-                        scale=alt.Scale(scheme='redblue', domain=[-0.3, 0.3]),
+                        scale=alt.Scale(scheme='redblue', domain=[-0.16, 0.16]),
                         legend=None),
         tooltip=['feature', 'correlation']
     ).properties(
@@ -42,7 +42,7 @@ def chart_duration_by_genre(df: pd.DataFrame) -> alt.LayerChart:
     df_genre = df.dropna(subset=['primary_genre'])
 
     points = alt.Chart(df_genre).mark_circle(size=30, opacity=0.35).encode(
-        x=alt.X('duration_min:Q', title='Duration (minutes)', scale=alt.Scale(domain=[0, 10])),
+        x=alt.X('duration_min:Q', title='Duration (minutes)', scale=alt.Scale(domain=[0, 9])),
         y=alt.Y('popularity:Q', title='Popularity'),
         color=alt.Color('primary_genre:N', title='Genre'),
         tooltip=['artist:N', 'song:N', 'year:Q', 'popularity:Q',
