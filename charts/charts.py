@@ -11,7 +11,6 @@ def base_theme():
         }
     }
 
-
 def chart_feature_correlation(df: pd.DataFrame) -> alt.Chart:
     features = ['danceability', 'energy', 'loudness', 'speechiness',
                 'acousticness', 'instrumentalness', 'liveness', 'valence', 'tempo', 'duration_ms']
@@ -34,8 +33,8 @@ def chart_feature_correlation(df: pd.DataFrame) -> alt.Chart:
         tooltip=['feature', 'correlation']
     ).properties(
         title='Which Audio Features Correlate with Popularity?',
-        width=500,
-        height=350
+        width=400,
+        height=300
     )
 
 
@@ -43,7 +42,7 @@ def chart_duration_by_genre(df: pd.DataFrame) -> alt.LayerChart:
     df_genre = df.dropna(subset=['primary_genre'])
 
     points = alt.Chart(df_genre).mark_circle(size=30, opacity=0.35).encode(
-        x=alt.X('duration_min:Q', title='Duration (minutes)', scale=alt.Scale(domain=[1.5, 7])),
+        x=alt.X('duration_min:Q', title='Duration (minutes)', scale=alt.Scale(domain=[0, 10])),
         y=alt.Y('popularity:Q', title='Popularity'),
         color=alt.Color('primary_genre:N', title='Genre'),
         tooltip=['artist:N', 'song:N', 'year:Q', 'popularity:Q',
@@ -61,10 +60,9 @@ def chart_duration_by_genre(df: pd.DataFrame) -> alt.LayerChart:
 
     return (points + trend).properties(
         title='Duration vs. Popularity by Genre',
-        width=600,
-        height=450
+        width=500,
+        height=400
     )
-
 
 def chart_rnb_vs_all(df: pd.DataFrame) -> alt.Chart:
     df_rnb = df[df['genre'].str.contains('R&B', na=False)]
@@ -86,21 +84,19 @@ def chart_rnb_vs_all(df: pd.DataFrame) -> alt.Chart:
 
     return alt.Chart(corr_compare).mark_bar().encode(
         x=alt.X('correlation:Q', title='Correlation with Popularity',
-                 scale=alt.Scale(domain=[-0.1, 0.1])),
+                 scale=alt.Scale(domain=[-0.16, 0.16])),
         y=alt.Y('feature:N',
                  sort=alt.EncodingSortField(field='correlation', order='descending'),
                  title=None),
         color=alt.Color('group:N', title='Group',
-                        scale=alt.Scale(domain=['R&B', 'All Songs'],
-                                        range=['#e45756', 'steelblue'])),
+                        scale=alt.Scale(domain=['R&B', 'All Songs'])),
         xOffset='group:N',
         tooltip=['feature:N', 'group:N', alt.Tooltip('correlation:Q', format='+.3f')]
     ).properties(
         title='What Predicts Popularity in R&B vs. All Songs?',
-        width=500,
-        height=400
+        width=450,
+        height=350
     )
-
 
 def chart_interactive_explorer(df: pd.DataFrame) -> alt.VConcatChart:
     genre_options = ['All'] + sorted(df['primary_genre'].dropna().unique().tolist())
@@ -113,7 +109,6 @@ def chart_interactive_explorer(df: pd.DataFrame) -> alt.VConcatChart:
     feature_param = alt.param(name='feature_select', value='loudness', bind=feature_dropdown)
 
     brush = alt.selection_interval(encodings=['x'])
-
     base = alt.Chart(df).transform_calculate(
         match_genre="datum.primary_genre === null ? 'Other' : datum.primary_genre"
     ).transform_filter(
