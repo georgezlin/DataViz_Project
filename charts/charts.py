@@ -34,7 +34,7 @@ def chart_feature_correlation(df: pd.DataFrame) -> alt.Chart:
     ).properties(
         title='Which Audio Features Correlate with Popularity?',
         width=400,
-        height=300
+        height=alt.Step(30)
     )
 
 
