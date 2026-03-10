@@ -1,13 +1,19 @@
 import streamlit as st
 import pandas as pd
-from vega_datasets import data as vega_data
 
 
 @st.cache_data
-def load_weather() -> pd.DataFrame:
-    """Load Seattle weather data and add helper columns."""
-    df = vega_data.seattle_weather()
-    df["date"] = pd.to_datetime(df["date"])
-    df["month_name"] = df["date"].dt.strftime("%b")
-    df["year"] = df["date"].dt.year
+def load_data() -> pd.DataFrame:
+    df = pd.read_csv("data/spotify_top_hits.csv")
+    df['duration_min'] = df['duration_ms'] / 60000
+
+    top_genres = ['pop', 'hip hop', 'rock', 'R&B', 'Dance/Electronic']
+
+    def get_primary_genre(genre_str):
+        for g in top_genres:
+            if g in str(genre_str):
+                return g
+        return None
+
+    df['primary_genre'] = df['genre'].apply(get_primary_genre)
     return df
